@@ -12,26 +12,26 @@ Introduction
 
 Requirements
 ------------
-1. It must be possible to create and manipulate vectors of any dimension via the interface: there must be no segregation of 2- or 3-dimensional vectors into their own classes. (This makes it straightforward to write code that's agnostic about the number of dimensions: for example a line/circle intersection algorithm that is re-usable for line/sphere intersection.)
+#. It must be possible to create and manipulate vectors of any dimension via the interface: there must be no segregation of 2- or 3-dimensional vectors into their own classes. (This makes it straightforward to write code that's agnostic about the number of dimensions: for example a line/circle intersection algorithm that is re-usable for line/sphere intersection.)
 
-2. Vectors must be agnostic as to the representation of scalars (where possible), so that users can carry out many kinds of computation on vectors of integers, fractions, decimals, and other numeric types, and get back vectors with elements of the same type. (Obviously this isn't possible for methods that needs to compute the magnitude of the vector, or to use trigonometry, but it must work for simple arithmetic operations.)
+#. Vectors must be agnostic as to the representation of scalars (where possible), so that users can carry out many kinds of computation on vectors of integers, fractions, decimals, and other numeric types, and get back vectors with elements of the same type. (Obviously this isn't possible for methods that need to compute the magnitude of the vector, or use trigonometry, but it must work for simple arithmetic operations.)
 
-3. There must be no arbitrary distinctions between points and vectors. It's up to the user to decide what kind of thing a vector represents.
+#. There must be no arbitrary distinctions between points and vectors. It's up to the user to decide what kind of thing a vector represents.
 
-4. There must be no dependencies on Numpy or other third-party libraries: the implementation must be in pure Python.
+#. There must be no dependencies on Numpy or other third-party libraries: the implementation must be in pure Python.
 
-4. The code must be portable between Python 2.7 and Python 3.2+.
+#. The code must be portable between Python 2.7 and Python 3.2+.
 
-5. Vector objects must be immutable, so that they can be stored in sets and used as keys in dictionaries.
+#. Vector objects must be immutable, so that they can be stored in sets and used as keys in dictionaries.
 
-6. Vector objects must be capable of being combined with other kinds of sequence, without the iterable needing to be converted. It must be possible to write code like ``v + (1, 0, 0)`` instead of the fussy ``v + Vector(1, 0, 0)``.
+#. Vector objects must be capable of being combined with other kinds of sequence, without the iterable needing to be converted. It must be possible to write code like ``v + (1, 0, 0)`` instead of the fussy ``v + Vector(1, 0, 0)``.
 
-7. Programming mistakes like the addition of two vectors with different dimensions must be detected and raised as exceptions where possible.
+#. Programming mistakes like the addition of two vectors with different dimensions must be detected and raised as exceptions where possible.
 
 
 Other design notes
 ------------------
-1. The term *magnitude* is used for the Euclidean norm; the term *length* is avoided because in Python that's too easily confused with the ``len()`` of the vector, that is, its *dimension*.
+#. The term *magnitude* is used for the Euclidean norm; the term *length* is avoided because in Python that's too easily confused with the ``len()`` of the vector, that is, its *dimension*.
 
 
 License
