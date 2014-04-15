@@ -90,30 +90,35 @@ class Vector(tuple):
     vectors:
 
         >>> from math import pi
-        >>> Vector(1, 0, 0).angle_to(Vector(0, 1, 0)) / pi
+        >>> Vector(1, 0, 0).angle_to((0, 1, 0)) / pi
         0.5
 
     The distance() method computes the distance between two points
     (expressed as vectors):
 
-        >>> Vector(3, -5, 1).distance(Vector(1, -2, 7))
+        >>> Vector(3, -5, 1).distance((1, -2, 7))
         7.0
 
     The dot() method computes the dot product.
 
-        >>> Vector(1, 2, 3).dot(Vector(3, 2, 1))
+        >>> Vector(1, 2, 3).dot((3, 2, 1))
         10
+
+    The map() method applies a function to each element in the vector:
+
+        >>> Vector(1.5, 2.6, 3.4).map(round)
+        Vector(2, 3, 3)
 
     The scaled() method returns a vector in the same direction but
     with the specified magnitude; the normalized() method returns a unit
     vector in the same direction; and the projected() method projects
-    a vector onto another vector.
+    another vector onto a vector.
 
         >>> Vector(10, 20, 20).scaled(3)
         Vector(1.0, 2.0, 2.0)
         >>> Vector(0, 0, 5).normalized()
         Vector(0.0, 0.0, 1.0)
-        >>> Vector(5, 6, 7).projected(Vector(1, 0, 0))
+        >>> Vector(2, 0, 0).projected((5, 6, 7))
         Vector(5.0, 0.0, 0.0)
 
     Any of the above three methods may raise ZeroDivisionError if
@@ -129,7 +134,7 @@ class Vector(tuple):
         Traceback (most recent call last):
             ...
         ZeroDivisionError: float division by zero
-        >>> Vector(1, 2, 3, 4).projected(Vector(0, 0, 0, 0))
+        >>> Vector(0, 0, 0, 0).projected((1, 2, 3, 4))
         ... # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
             ...
@@ -139,7 +144,7 @@ class Vector(tuple):
     Three-dimensional vectors support one extra operation: the cross()
     method computes the cross product:
 
-        >>> Vector(2, 1, 0).cross(Vector(3, 4, 0))
+        >>> Vector(2, 1, 0).cross((3, 4, 0))
         Vector(0, 0, 5)
 
 
@@ -155,7 +160,7 @@ class Vector(tuple):
     product between the two vectors (interpreted as if they were
     three- dimensional vectors lying in the XY-plane):
 
-        >>> Vector(3, 4).cross(Vector(2, 1))
+        >>> Vector(3, 4).cross((2, 1))
         -5
 
     The perpendicular() method returns a vector that's perpendicular
@@ -181,7 +186,7 @@ class Vector(tuple):
             fmt = '{0}({1!r})'
         else:
             fmt = '{0}{1!r}'
-        return fmt.format(self.__class__.__name__, tuple(self))
+        return fmt.format(type(self).__name__, tuple(self))
 
     def _check_compatibility(self, other):
         if len(self) != len(other):
@@ -257,7 +262,12 @@ class Vector(tuple):
         """
         if len(self) in (2, 3):
             return atan2(abs(self.cross(other)), self.dot(other))
-        return acos(self.dot(other) / (abs(self) * abs(other)))
+        else:
+            # We avoid other.magnitude_squared so that this works if
+            # other is a plain sequence rather than a Vector object.
+            return acos(self.dot(other)
+                        / sqrt(self.magnitude_squared
+                               * sum(v * v for v in other)))
 
     def cross(self, other):
         """Return the cross product with another vector. For two-dimensional
@@ -301,6 +311,13 @@ class Vector(tuple):
         """The squared magnitude of the vector."""
         return sum(v * v for v in self)
 
+    def map(self, f):
+        """Return the vector whose elements are the result of applying the
+        function f to the elements of this vector.
+        
+        """
+        return Vector(f(v) for v in self)
+
     @property
     def non_zero(self):
         """False if this vector has magnitude zero, True otherwise."""
@@ -324,11 +341,11 @@ class Vector(tuple):
             raise self._dimension_error('perpendicular')
 
     def projected(self, other):
-        """Return the projection of this vector onto another vector. If the
-        other vector has magnitude zero, raise ZeroDivisionError.
+        """Return the projection of another vector onto this vector. If this
+        vector has magnitude zero, raise ZeroDivisionError.
 
         """
-        return other * self.dot(other) / other.magnitude_squared
+        return self * (self.dot(other) / self.magnitude_squared)
 
     def rotated(self, theta):
         """Return the vector rotated through theta radians about the
